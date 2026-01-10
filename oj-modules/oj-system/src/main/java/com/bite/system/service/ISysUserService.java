@@ -1,7 +1,8 @@
 package com.bite.system.service;
 
+import com.bite.common.core.domain.R;
 import com.bite.system.controller.LoginResult;
 
 public interface ISysUserService {
-    LoginResult login(String userAccount, String password);
+    R<Void> login(String userAccount, String password);
 }
