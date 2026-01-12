@@ -1,16 +1,14 @@
-server:
-  port: 9201
-
 spring:
   application:
     name: oj-system
-  datasource:
-    url: jdbc:mysql://localhost:3307/bitoj_dev?useUnicode=true&characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2B8
-    username: root
-    password: 123456
-    hikari:
-      minimum-idle: 5
-      maximum-pool-size: 20
-      idle-timeout: 30000
-      connection-timeout: 30000
-      pool-name: OjSystemHikariCP
+  profiles:
+    active: local
+  cloud:
+    nacos:
+      discovery:
+        namespace: 1b90f136-42ba-4e2e-9214-fe3fa7476e5e
+        server-addr: http://localhost:8848
+      config:
+        namespace: 1b90f136-42ba-4e2e-9214-fe3fa7476e5e
+        server-addr: http://localhost:8848
+        file-extension: yaml

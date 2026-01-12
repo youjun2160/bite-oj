@@ -3,6 +3,7 @@ package com.bite.system.test;
 import com.bite.common.core.domain.R;
 import com.bite.common.core.enums.ResultCode;
 import com.bite.system.test.service.ITestService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/test")
+@Slf4j
 public class TestController {
 
     @Autowired
@@ -29,5 +31,12 @@ public class TestController {
         result.setMsg(ResultCode.SUCCESS.getMsg());
         result.setData("apifoxtest" + apiId + ":" + pages);
         return result;
+    }
+
+    @GetMapping("/log")
+    public String log(){
+        log.info("info");
+        log.error("error");
+        return "日志测试";
     }
 }
