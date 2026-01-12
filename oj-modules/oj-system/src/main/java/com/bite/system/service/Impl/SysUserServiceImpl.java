@@ -42,4 +42,15 @@ public class SysUserServiceImpl implements ISysUserService {
 //        return loginResult;
         return R.fail(ResultCode.FAILED_LOGIN);
     }
+
+    //编译时异常
+
+    //运行时异常
+
+    //全局异常处理  日志框架
+
+    //1.增加全局异常处理
+
+    //2.当捕获到异常时，记录相关日志，作为问题排查的线索
+
 }
