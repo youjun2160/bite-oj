@@ -35,6 +35,8 @@ public class SysUserServiceImpl implements ISysUserService {
 //            loginResult.setCode(ResultCode.SUCCESS.getCode());
 //            loginResult.setMsg(ResultCode.SUCCESS.getMsg());
 //            return loginResult;
+
+            //jwt = 生成jwttoken方法
             return R.ok();
         }
 //        loginResult.setCode(ResultCode.FAILED_LOGIN.getCode());
