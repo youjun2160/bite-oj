@@ -2,6 +2,8 @@ package com.bite.system.test;
 
 import com.bite.common.core.domain.R;
 import com.bite.common.core.enums.ResultCode;
+import com.bite.common.redis.service.RedisService;
+import com.bite.system.domain.SysUser;
 import com.bite.system.test.service.ITestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ public class TestController {
 
     @Autowired
     private ITestService testService;
+    @Autowired
+    private RedisService redisService;
 
     @GetMapping("/list")
     public List<?> list(){
@@ -31,6 +35,16 @@ public class TestController {
         result.setMsg(ResultCode.SUCCESS.getMsg());
         result.setData("apifoxtest" + apiId + ":" + pages);
         return result;
+    }
+
+    @GetMapping("/redisAddAndGet")
+    public String redisAdd(){
+        SysUser sysUser = new SysUser();
+        sysUser.setUserAccount("redisTest");
+        redisService.setCacheObject("u", sysUser);
+
+        SysUser us = redisService.getCacheObject("u", SysUser.class);
+        return us.toString();
     }
 
     @GetMapping("/log")

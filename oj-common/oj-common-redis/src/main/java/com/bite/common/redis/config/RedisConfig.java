@@ -1,6 +1,5 @@
-package com.bite.common.redis;
+package com.bite.common.redis.config;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +7,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-@SpringBootApplication
 @Configuration
 public class RedisConfig extends CachingConfigurerSupport {
     @Bean

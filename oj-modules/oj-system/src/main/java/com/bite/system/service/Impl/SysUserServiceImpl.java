@@ -4,22 +4,37 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.bite.common.core.domain.R;
 import com.bite.common.core.enums.ResultCode;
+import com.bite.common.redis.service.RedisService;
+import com.bite.common.security.utils.JwtUtils;
 import com.bite.system.controller.LoginResult;
 import com.bite.system.domain.SysUser;
 import com.bite.system.mapper.SysUserMapper;
 import com.bite.system.service.ISysUserService;
 import com.bite.system.utils.BCryptUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
+@RefreshScope
 public class SysUserServiceImpl implements ISysUserService {
 
     @Autowired
     private SysUserMapper sysUserMapper;
 
+    @Value("${jwt.secret}")
+    private String secret;
+
+    @Autowired
+    private RedisService redisService;
+
     @Override
-    public R<Void> login(String userAccount, String password) {
+    public R<String> login(String userAccount, String password) {
         //通过账号去数据库中查询
         LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
         SysUser sysUser = sysUserMapper.selectOne(queryWrapper
@@ -37,7 +52,15 @@ public class SysUserServiceImpl implements ISysUserService {
 //            return loginResult;
 
             //jwt = 生成jwttoken方法
-            return R.ok();
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("userId", sysUser.getUserId());
+            String token = JwtUtils.createToken(claims, secret);
+            //第三方机制中存放敏感信息  redis
+
+            //身份认证具体还要存储哪些信息
+            //使用什么样的数据结构
+            //过期时间我们应该怎么记录，过期时间应该多长
+            return R.ok(token);
         }
 //        loginResult.setCode(ResultCode.FAILED_LOGIN.getCode());
 //        loginResult.setMsg(ResultCode.FAILED_LOGIN.getMsg());

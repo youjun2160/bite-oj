@@ -1,4 +1,4 @@
-package com.bite.common.redis;
+package com.bite.common.redis.config;
 import com.alibaba.fastjson2.JSON;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
