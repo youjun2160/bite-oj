@@ -1,5 +1,6 @@
 package com.bite.common.security.utils;
 
+import com.bite.common.core.constants.JwtConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -47,5 +48,15 @@ public class JwtUtils {
         //1.用户登陆成功之后，调用creatToken生成token令牌， 并发送给客户端
         //2.后续的所有请求，在调用具体的接口之前都要先通过token进行身份认证
         //3.用户使用系统的过程中我们需要进行适时的延长jwt的过期时间
+    }
+
+
+    public static String getUserKey(Claims claims) {
+        Object value = claims.get(JwtConstants.LOGIN_USER_KEY);
+        if (value != null) {
+            return "";
+        }
+
+        return value.toString();
     }
 }

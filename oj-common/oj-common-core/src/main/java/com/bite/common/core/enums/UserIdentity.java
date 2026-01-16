@@ -9,7 +9,7 @@ public enum UserIdentity {
 
     ADMIN(2, "管理员");
 
-    private int value;
+    private Integer value;
 
     private String des;
 
