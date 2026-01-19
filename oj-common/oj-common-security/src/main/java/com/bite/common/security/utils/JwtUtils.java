@@ -35,6 +35,22 @@ public class JwtUtils {
                 Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
+    private static String toStr(Object value) {
+        if (value != null) {
+            return "";
+        }
+
+        return value.toString();
+    }
+
+    public static String getUserId(Claims claims) {
+        return toStr(JwtConstants.LOGIN_USER_ID);
+    }
+
+    public static String getUserKey(Claims claims) {
+        return toStr(JwtConstants.LOGIN_USER_KEY);
+    }
+
     public static void main(String[] args) {
 //        Map<String, Object> claims = new HashMap<String, Object>();
 //        claims.put("uerId", 123456789L);
@@ -50,13 +66,4 @@ public class JwtUtils {
         //3.用户使用系统的过程中我们需要进行适时的延长jwt的过期时间
     }
 
-
-    public static String getUserKey(Claims claims) {
-        Object value = claims.get(JwtConstants.LOGIN_USER_KEY);
-        if (value != null) {
-            return "";
-        }
-
-        return value.toString();
-    }
 }

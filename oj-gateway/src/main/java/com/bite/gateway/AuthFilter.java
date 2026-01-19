@@ -56,6 +56,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
         String url = request.getURI().getPath();//请求的接口地址  登录接口是否需要进行身份认证？ 否
         // 跳过不需要验证的路径  接口白名单中的所有接口均不需要进行身份的认证
         if (matches(url, ignoreWhite.getWhites())) { //判断当如果当前的接口再拜名单中则不需要进行身份认证
+            //判断当前接口是否在白名单中， 如果在白名单中则不需要进行身份认证  ignoreWhite.getWhites()：拿到nacos上配置的接口白名单
             return chain.filter(exchange);
         }
 
@@ -69,6 +70,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
         try {
             claims = JwtUtils.parseToken(token, secret); //获取令牌中信息 解析payload中信息  存储着用户的唯一标识信息
             if (claims == null) {
+                //springCloud gateway 基于 webflux
                 return unauthorizedResponse(exchange, "令牌已过期或验证不正确！");
             }
         } catch (Exception e) {
@@ -80,12 +82,16 @@ public class AuthFilter implements GlobalFilter, Ordered {
         if (!isLogin) {
             return unauthorizedResponse(exchange, "登录状态已过期");
         }
-        String userid = JwtUtils.getUserId(claims); //判断jwt中的信息是否完整
-        if (StrUtil.isEmpty(userid)) {
+        String userId = JwtUtils.getUserId(claims); //判断jwt中的信息是否完整
+        if (StrUtil.isEmpty(userId)) {
             return unauthorizedResponse(exchange, "令牌验证失败");
         }
 
+        //token是正确的  并且没有过期
+        //判断redis存储  关于用户的身份认证信息是否是正确的
+        //判断当前请求 请求是c端功能（只有c端用户可以请求） 还是b端功能（只有管理员可以请求）
         LoginUser user = redisService.getCacheObject(getTokenKey(userKey), LoginUser.class);
+
         if (url.contains(HttpConstants.SYSTEM_URL_PREFIX) && !UserIdentity.ADMIN.getValue().equals(user.getIdentity())) {
             return unauthorizedResponse(exchange, "令牌验证失败");
         }
@@ -107,6 +113,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
         if (StrUtil.isEmpty(url) || CollectionUtils.isEmpty(patternList)) {
             return false;
         }
+        //如果和白名单中的其中一个地址匹配那么就返回true
         for (String pattern : patternList) {
             if (isMatch(pattern, url)) {
                 return true;
