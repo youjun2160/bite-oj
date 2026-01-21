@@ -1,15 +1,16 @@
-package com.bite.gateway;
+package com.bite.gateway.filter;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
-import com.bite.common.security.domain.LoginUser;
-import com.bite.common.security.utils.JwtUtils;
+import com.bite.common.core.domain.LoginUser;
+import com.bite.common.core.utils.JwtUtils;
 import com.bite.common.core.constants.CacheConstants;
 import com.bite.common.core.constants.HttpConstants;
 import com.bite.common.core.domain.R;
 import com.bite.common.core.enums.ResultCode;
 import com.bite.common.core.enums.UserIdentity;
 import com.bite.common.redis.service.RedisService;
+import com.bite.gateway.properties.IgnoreWhiteProperties;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

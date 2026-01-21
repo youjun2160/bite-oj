@@ -1,4 +1,4 @@
-package com.bite.common.security.utils;
+package com.bite.common.core.utils;
 
 import com.bite.common.core.constants.JwtConstants;
 import io.jsonwebtoken.Claims;
@@ -35,20 +35,20 @@ public class JwtUtils {
                 Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
+    public static String getUserId(Claims claims) {
+        return toStr(claims.get(JwtConstants.LOGIN_USER_ID));
+    }
+
+    public static String getUserKey(Claims claims) {
+        return toStr(claims.get(JwtConstants.LOGIN_USER_KEY));
+    }
+
     private static String toStr(Object value) {
-        if (value != null) {
+        if (value == null) {
             return "";
         }
 
         return value.toString();
-    }
-
-    public static String getUserId(Claims claims) {
-        return toStr(JwtConstants.LOGIN_USER_ID);
-    }
-
-    public static String getUserKey(Claims claims) {
-        return toStr(JwtConstants.LOGIN_USER_KEY);
     }
 
     public static void main(String[] args) {
@@ -64,6 +64,10 @@ public class JwtUtils {
         //1.用户登陆成功之后，调用creatToken生成token令牌， 并发送给客户端
         //2.后续的所有请求，在调用具体的接口之前都要先通过token进行身份认证
         //3.用户使用系统的过程中我们需要进行适时的延长jwt的过期时间
+
+
+        //用户使用系统的过程中我们需要进行适时的延长jwt的过期时间：1、具体什么时间进行有效时间的延长
+        // 2，代码具体该怎么写：将redis中存储的数据有效时间延长
     }
 
 }

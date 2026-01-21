@@ -1,16 +1,10 @@
 package com.bite.system.service.Impl;
 
-import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.bite.common.core.constants.CacheConstants;
-import com.bite.common.core.constants.JwtConstants;
 import com.bite.common.core.domain.R;
 import com.bite.common.core.enums.ResultCode;
 import com.bite.common.core.enums.UserIdentity;
-import com.bite.common.redis.service.RedisService;
 import com.bite.common.security.service.TokenService;
-import com.bite.common.security.utils.JwtUtils;
-import com.bite.common.security.domain.LoginUser;
 import com.bite.system.domain.SysUser;
 import com.bite.system.mapper.SysUserMapper;
 import com.bite.system.service.ISysUserService;

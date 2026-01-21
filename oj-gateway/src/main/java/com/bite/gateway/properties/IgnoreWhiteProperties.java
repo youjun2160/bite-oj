@@ -1,4 +1,4 @@
-package com.bite.gateway;
+package com.bite.gateway.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;

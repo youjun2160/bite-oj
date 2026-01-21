@@ -4,10 +4,10 @@ package com.bite.common.security.service;
 import cn.hutool.core.lang.UUID;
 import com.bite.common.core.constants.CacheConstants;
 import com.bite.common.core.constants.JwtConstants;
-import com.bite.common.core.enums.UserIdentity;
 import com.bite.common.redis.service.RedisService;
-import com.bite.common.security.domain.LoginUser;
-import com.bite.common.security.utils.JwtUtils;
+import com.bite.common.core.domain.LoginUser;
+import com.bite.common.core.utils.JwtUtils;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,13 +35,40 @@ public class TokenService {
         //使用什么样的数据结构
         //key 必须保证唯一   便于维护 统一前缀：logintoken:userId  userId是通过雪花算法生成的
         //自增  管理员 c端用户
-        String key = CacheConstants.LOGIN_TOKEN_KEY + userKey;
+        String tokenKey = getTokenKey(userKey);
         //String key = "logintoken:" + sysUser.getUserId();
         LoginUser loginUser = new LoginUser();
         loginUser.setIdentity(identity);
-        redisService.setCacheObject(key, loginUser, CacheConstants.EXP, TimeUnit.MINUTES);
+        redisService.setCacheObject(tokenKey, loginUser, CacheConstants.EXP, TimeUnit.MINUTES);
 
         return token;
 
+    }
+
+
+    //延长token 的有效时间 就是延长redis中存储用户敏感信息的有效时间    操作redis，通过token拿到唯一标识
+    public void extendToken(String token, String secret){
+        Claims claims;
+
+        try {
+            claims = JwtUtils.parseToken(token, secret); //获取令牌中信息 解析payload中信息  存储着用户的唯一标识信息
+            if (claims == null) {
+                //todo
+            }
+        } catch (Exception e) {
+            //todo
+        }
+        String userKey = JwtUtils.getUserKey(claims); //获取jwt中的key
+        String tokenKey = JwtUtils.getUserKey(userKey);
+
+        //720min  12小时      剩余  180min  的时候进行延长
+        Long expire = redisService.getExpire(tokenKey, TimeUnit.MINUTES);
+        if(expire != null && expire < CacheConstants.REFRESH_TIME){
+            redisService.expire(tokenKey, CacheConstants.EXP, TimeUnit.MINUTES);
+        }
+    }
+
+    private String getTokenKey(String userKey){
+        return CacheConstants.LOGIN_TOKEN_KEY + userKey;
     }
 }
