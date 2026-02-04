@@ -40,7 +40,7 @@ import java.util.List;
 @Component
 public class AuthFilter implements GlobalFilter, Ordered {
 
-    // 排除过滤的 uri 白名单地址,在nacos自行添加
+    // 排除过滤的 url 白名单地址,在nacos自行添加
     @Autowired
     private IgnoreWhiteProperties ignoreWhite;
 

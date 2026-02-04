@@ -6,5 +6,5 @@ public class CacheConstants {
 
     public final static long EXP = 720;
 
-    public static final Long REFRESH_TIME = 180;
+    public static final Long REFRESH_TIME = 180L;
 }

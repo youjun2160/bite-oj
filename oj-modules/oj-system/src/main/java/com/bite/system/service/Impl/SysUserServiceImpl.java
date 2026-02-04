@@ -1,11 +1,14 @@
 package com.bite.system.service.Impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bite.common.core.domain.R;
 import com.bite.common.core.enums.ResultCode;
 import com.bite.common.core.enums.UserIdentity;
+import com.bite.common.core.service.BaseService;
 import com.bite.common.security.service.TokenService;
 import com.bite.system.domain.SysUser;
+import com.bite.system.domain.SysUserSaveDTO;
 import com.bite.system.mapper.SysUserMapper;
 import com.bite.system.service.ISysUserService;
 import com.bite.system.utils.BCryptUtils;
@@ -14,9 +17,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
 @Service
 @RefreshScope
-public class SysUserServiceImpl implements ISysUserService {
+public class SysUserServiceImpl extends BaseService implements ISysUserService {
 
     @Autowired
     private SysUserMapper sysUserMapper;
@@ -52,6 +60,23 @@ public class SysUserServiceImpl implements ISysUserService {
 //        loginResult.setMsg(ResultCode.FAILED_LOGIN.getMsg());
 //        return loginResult;
         return R.fail(ResultCode.FAILED_LOGIN);
+    }
+
+    @Override
+    public R<Void> add(SysUserSaveDTO sysUserSaveDTO) {
+        //将DTO转为sysUser
+        List<SysUser> sysUserList = sysUserMapper.selectList(new LambdaQueryWrapper<SysUser>()
+                .eq(SysUser::getUserAccount, sysUserSaveDTO.getUserAccount()));
+        if(CollectionUtil.isNotEmpty(sysUserList)){
+            //用户已经存在
+            return R.fail(ResultCode.FAILED_USER_EXISTS);
+
+        }
+        SysUser sysUser = new SysUser();
+        sysUser.setUserAccount(sysUserSaveDTO.getUserAccount());
+        sysUser.setPassword(BCryptUtils.encryptPassword(sysUserSaveDTO.getPassword()));
+
+        return toR(sysUserMapper.insert(sysUser));
     }
 
     //编译时异常

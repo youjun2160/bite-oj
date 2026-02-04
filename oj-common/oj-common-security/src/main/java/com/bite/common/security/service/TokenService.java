@@ -8,6 +8,7 @@ import com.bite.common.redis.service.RedisService;
 import com.bite.common.core.domain.LoginUser;
 import com.bite.common.core.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 //操作用户登录token的方法
 @Service
+@Slf4j
 public class TokenService {
 
     @Autowired
@@ -47,19 +49,23 @@ public class TokenService {
 
 
     //延长token 的有效时间 就是延长redis中存储用户敏感信息的有效时间    操作redis，通过token拿到唯一标识
+
+    //在身份认证通过之后再调用，在调用controller之前  在拦截器中调用
     public void extendToken(String token, String secret){
         Claims claims;
 
         try {
             claims = JwtUtils.parseToken(token, secret); //获取令牌中信息 解析payload中信息  存储着用户的唯一标识信息
             if (claims == null) {
-                //todo
+                log.error("解析token：{}, 出现异常", token);
+                return;
             }
         } catch (Exception e) {
-            //todo
+            log.error("解析token：{}, 出现异常", token, e);
+            return;
         }
         String userKey = JwtUtils.getUserKey(claims); //获取jwt中的key
-        String tokenKey = JwtUtils.getUserKey(userKey);
+        String tokenKey = getTokenKey(userKey);
 
         //720min  12小时      剩余  180min  的时候进行延长
         Long expire = redisService.getExpire(tokenKey, TimeUnit.MINUTES);

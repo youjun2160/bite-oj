@@ -1,5 +1,6 @@
 package com.bite.system.controller;
 
+import com.bite.common.core.controller.BaseController;
 import com.bite.common.core.domain.R;
 import com.bite.system.domain.LoginDTO;
 import com.bite.system.domain.SysUser;
@@ -52,7 +53,7 @@ public class SysUserController {
     @ApiResponse(responseCode = "2000", description = "服务繁忙请稍后重试")
     @ApiResponse(responseCode = "3101", description = "用户已存在")
     public R<Void> add(@RequestBody SysUserSaveDTO sysUserSaveDTO) {
-        return null;
+        return sysUserService.add(sysUserSaveDTO);
     }
 
     //删除
