@@ -8,7 +8,7 @@ import com.bite.common.core.enums.UserIdentity;
 import com.bite.common.core.service.BaseService;
 import com.bite.common.security.service.TokenService;
 import com.bite.system.domain.SysUser;
-import com.bite.system.domain.SysUserSaveDTO;
+import com.bite.system.domain.dto.SysUserSaveDTO;
 import com.bite.system.mapper.SysUserMapper;
 import com.bite.system.service.ISysUserService;
 import com.bite.system.utils.BCryptUtils;
@@ -17,9 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Service
