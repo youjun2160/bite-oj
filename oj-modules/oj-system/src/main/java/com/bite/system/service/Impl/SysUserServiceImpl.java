@@ -2,7 +2,9 @@ package com.bite.system.service.Impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.bite.common.core.domain.LoginUser;
 import com.bite.common.core.domain.R;
+import com.bite.common.core.domain.vo.LoginUserVO;
 import com.bite.common.core.enums.ResultCode;
 import com.bite.common.core.enums.UserIdentity;
 import com.bite.common.core.service.BaseService;
@@ -37,7 +39,8 @@ public class SysUserServiceImpl extends BaseService implements ISysUserService {
         //通过账号去数据库中查询
         LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
         SysUser sysUser = sysUserMapper.selectOne(queryWrapper
-                .select(SysUser::getUserId, SysUser::getPassword).eq(SysUser::getUserAccount, userAccount));
+                .select(SysUser::getUserId, SysUser::getPassword, SysUser::getNickName)
+                .eq(SysUser::getUserAccount, userAccount));
         R loginResult = new R();
         if (sysUser == null) {
 //            loginResult.setCode(ResultCode.FAILED_USER_NOT_EXISTS.getCode());
@@ -51,7 +54,7 @@ public class SysUserServiceImpl extends BaseService implements ISysUserService {
 //            return loginResult;
 
             //过期时间我们应该怎么记录，过期时间应该多长  720分钟
-            return R.ok(tokenService.creatToken(sysUser.getUserId(), secret, UserIdentity.ADMIN.getValue()));
+            return R.ok(tokenService.creatToken(sysUser.getUserId(), secret, UserIdentity.ADMIN.getValue(), sysUser.getNickName()));
         }
 //        loginResult.setCode(ResultCode.FAILED_LOGIN.getCode());
 //        loginResult.setMsg(ResultCode.FAILED_LOGIN.getMsg());
@@ -70,10 +73,22 @@ public class SysUserServiceImpl extends BaseService implements ISysUserService {
 
         }
         SysUser sysUser = new SysUser();
+
         sysUser.setUserAccount(sysUserSaveDTO.getUserAccount());
         sysUser.setPassword(BCryptUtils.encryptPassword(sysUserSaveDTO.getPassword()));
 
         return toR(sysUserMapper.insert(sysUser));
+    }
+
+    @Override
+    public R<LoginUserVO> info(String token) {
+        LoginUser loginUser = tokenService.getLoginUser(token, secret);
+        if(loginUser == null){
+            return R.fail();
+        }
+        LoginUserVO loginUserVO = new LoginUserVO();
+        loginUserVO.setNickName(loginUser.getNickName());
+        return R.ok(loginUserVO);
     }
 
     //编译时异常

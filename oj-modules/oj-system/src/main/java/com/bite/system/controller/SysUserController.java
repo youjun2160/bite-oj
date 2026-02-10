@@ -1,6 +1,9 @@
 package com.bite.system.controller;
 
+import com.bite.common.core.constants.HttpConstants;
+import com.bite.common.core.domain.LoginUser;
 import com.bite.common.core.domain.R;
+import com.bite.common.core.domain.vo.LoginUserVO;
 import com.bite.system.domain.dto.LoginDTO;
 import com.bite.system.domain.dto.SysUserSaveDTO;
 import com.bite.system.domain.vo.SysUserVO;
@@ -31,7 +34,7 @@ public class SysUserController {
     //响应数据
 
     //swagger  生成接口文档
-    //接口地址:/sysUser/login
+    //接口地址:/system/sysUser/login
     @PostMapping("/login")
     @Operation(summary = "管理员登录", description = "根据账号密码进行管理员登录")
     @ApiResponse(responseCode = "1000", description = "操作成功")
@@ -40,6 +43,12 @@ public class SysUserController {
     @ApiResponse(responseCode = "3103", description = "用户名或密码错误")
     public R<String> login(@RequestBody LoginDTO loginDTO) {
         return sysUserService.login(loginDTO.getUserAccount(), loginDTO.getPassword());
+    }
+
+    //接口地址:/system/sysUser/info
+    @GetMapping("/info")
+    public R<LoginUserVO> info(@RequestHeader(HttpConstants.AUTHENTICATION) String token) {
+        return sysUserService.info(token);
     }
 
     //管理员的增删改查

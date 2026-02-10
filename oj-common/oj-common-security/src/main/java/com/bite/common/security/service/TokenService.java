@@ -24,7 +24,7 @@ public class TokenService {
     @Autowired
     private RedisService redisService;
 
-    public String creatToken(Long userId, String secret, Integer identity){
+    public String creatToken(Long userId, String secret, Integer identity, String nickName){
         Map<String, Object> claims = new HashMap<>();
         String userKey = UUID.fastUUID().toString();
         claims.put(JwtConstants.LOGIN_USER_ID, userId);
@@ -41,6 +41,7 @@ public class TokenService {
         //String key = "logintoken:" + sysUser.getUserId();
         LoginUser loginUser = new LoginUser();
         loginUser.setIdentity(identity);
+        loginUser.setNickName(nickName);
         redisService.setCacheObject(tokenKey, loginUser, CacheConstants.EXP, TimeUnit.MINUTES);
 
         return token;
@@ -52,19 +53,23 @@ public class TokenService {
 
     //在身份认证通过之后再调用，在调用controller之前  在拦截器中调用
     public void extendToken(String token, String secret){
-        Claims claims;
-
-        try {
-            claims = JwtUtils.parseToken(token, secret); //获取令牌中信息 解析payload中信息  存储着用户的唯一标识信息
-            if (claims == null) {
-                log.error("解析token：{}, 出现异常", token);
-                return;
-            }
-        } catch (Exception e) {
-            log.error("解析token：{}, 出现异常", token, e);
+//        Claims claims;
+//
+//        try {
+//            claims = JwtUtils.parseToken(token, secret); //获取令牌中信息 解析payload中信息  存储着用户的唯一标识信息
+//            if (claims == null) {
+//                log.error("解析token：{}, 出现异常", token);
+//                return;
+//            }
+//        } catch (Exception e) {
+//            log.error("解析token：{}, 出现异常", token, e);
+//            return;
+//        }
+//        String userKey = JwtUtils.getUserKey(claims); //获取jwt中的key
+        String userKey = getUserKey(token, secret);
+        if(userKey == null){
             return;
         }
-        String userKey = JwtUtils.getUserKey(claims); //获取jwt中的key
         String tokenKey = getTokenKey(userKey);
 
         //720min  12小时      剩余  180min  的时候进行延长
@@ -74,7 +79,31 @@ public class TokenService {
         }
     }
 
+    private String getUserKey(String token, String secret) {
+        Claims claims;
+
+        try {
+            claims = JwtUtils.parseToken(token, secret); //获取令牌中信息 解析payload中信息  存储着用户的唯一标识信息
+            if (claims == null) {
+                log.error("解析token：{}, 出现异常", token);
+                return null;
+            }
+        } catch (Exception e) {
+            log.error("解析token：{}, 出现异常", token, e);
+            return null;
+        }
+        return JwtUtils.getUserKey(claims); //获取jwt中的key
+    }
+
     private String getTokenKey(String userKey){
         return CacheConstants.LOGIN_TOKEN_KEY + userKey;
+    }
+
+    public LoginUser getLoginUser(String token, String secret) {
+        String userKey = getUserKey(token, secret);
+        if(userKey == null){
+            return null;
+        }
+        return redisService.getCacheObject(getTokenKey(userKey), LoginUser.class);
     }
 }
