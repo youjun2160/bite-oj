@@ -1,18 +1,20 @@
-package com.bite.system.service.Impl;
+package com.bite.system.service.sysuser.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.bite.common.core.constants.HttpConstants;
+import com.bite.common.core.controller.BaseController;
 import com.bite.common.core.domain.LoginUser;
 import com.bite.common.core.domain.R;
 import com.bite.common.core.domain.vo.LoginUserVO;
 import com.bite.common.core.enums.ResultCode;
 import com.bite.common.core.enums.UserIdentity;
-import com.bite.common.core.service.BaseService;
 import com.bite.common.security.service.TokenService;
-import com.bite.system.domain.SysUser;
-import com.bite.system.domain.dto.SysUserSaveDTO;
-import com.bite.system.mapper.SysUserMapper;
-import com.bite.system.service.ISysUserService;
+import com.bite.system.domain.sysuser.SysUser;
+import com.bite.system.domain.sysuser.dto.SysUserSaveDTO;
+import com.bite.system.mapper.sysuser.SysUserMapper;
+import com.bite.system.service.sysuser.ISysUserService;
 import com.bite.system.utils.BCryptUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +25,7 @@ import java.util.List;
 
 @Service
 @RefreshScope
-public class SysUserServiceImpl extends BaseService implements ISysUserService {
+public class SysUserServiceImpl extends BaseController implements ISysUserService {
 
     @Autowired
     private SysUserMapper sysUserMapper;
@@ -82,6 +84,10 @@ public class SysUserServiceImpl extends BaseService implements ISysUserService {
 
     @Override
     public R<LoginUserVO> info(String token) {
+        // 如果前端设置了令牌前缀，则裁剪掉前缀
+        if (StrUtil.isNotEmpty(token) && token.startsWith(HttpConstants.PREFIX)) {
+            token = token.replaceFirst(HttpConstants.PREFIX, StrUtil.EMPTY);
+        }
         LoginUser loginUser = tokenService.getLoginUser(token, secret);
         if(loginUser == null){
             return R.fail();
@@ -89,6 +95,15 @@ public class SysUserServiceImpl extends BaseService implements ISysUserService {
         LoginUserVO loginUserVO = new LoginUserVO();
         loginUserVO.setNickName(loginUser.getNickName());
         return R.ok(loginUserVO);
+    }
+
+    @Override
+    public boolean logout(String token) {
+        // 如果前端设置了令牌前缀，则裁剪掉前缀
+        if (StrUtil.isNotEmpty(token) && token.startsWith(HttpConstants.PREFIX)) {
+            token = token.replaceFirst(HttpConstants.PREFIX, StrUtil.EMPTY);
+        }
+        return tokenService.deleteLoginUser(token, secret);
     }
 
     //编译时异常

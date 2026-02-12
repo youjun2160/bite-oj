@@ -1,13 +1,13 @@
-package com.bite.system.controller;
+package com.bite.system.controller.sysuser;
 
 import com.bite.common.core.constants.HttpConstants;
-import com.bite.common.core.domain.LoginUser;
+import com.bite.common.core.controller.BaseController;
 import com.bite.common.core.domain.R;
 import com.bite.common.core.domain.vo.LoginUserVO;
-import com.bite.system.domain.dto.LoginDTO;
-import com.bite.system.domain.dto.SysUserSaveDTO;
-import com.bite.system.domain.vo.SysUserVO;
-import com.bite.system.service.ISysUserService;
+import com.bite.system.domain.sysuser.dto.LoginDTO;
+import com.bite.system.domain.sysuser.dto.SysUserSaveDTO;
+import com.bite.system.domain.sysuser.vo.SysUserVO;
+import com.bite.system.service.sysuser.ISysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/sysUser")
 @Tag(name = "管理员接口")
-public class SysUserController {
+public class SysUserController extends BaseController {
 
     @Autowired
     private ISysUserService sysUserService;
@@ -44,6 +44,14 @@ public class SysUserController {
     public R<String> login(@RequestBody LoginDTO loginDTO) {
         return sysUserService.login(loginDTO.getUserAccount(), loginDTO.getPassword());
     }
+
+    //接口地址:/system/sysUser/logout
+    @DeleteMapping("/logout")
+    public R<Void> logout(@RequestHeader(HttpConstants.AUTHENTICATION) String token) {
+        boolean logout = sysUserService.logout(token);
+        return toR(logout);
+    }
+
 
     //接口地址:/system/sysUser/info
     @GetMapping("/info")

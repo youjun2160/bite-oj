@@ -106,4 +106,12 @@ public class TokenService {
         }
         return redisService.getCacheObject(getTokenKey(userKey), LoginUser.class);
     }
+
+    public boolean deleteLoginUser(String token, String secret) {
+        String userKey = getUserKey(token, secret);
+        if(userKey == null){
+            return false;
+        }
+        return redisService.deleteObject(getTokenKey(userKey));
+    }
 }
