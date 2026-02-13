@@ -20,6 +20,6 @@ public class QuestionController extends BaseController {
 
     @GetMapping("/list")
     public TableDataInfo list(QuestionQueryDTO questionQueryDTO) {
-        return questionService.list(questionQueryDTO);
+        return getTableDataInfo(questionService.list(questionQueryDTO));
     }
 }

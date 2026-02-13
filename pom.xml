@@ -36,6 +36,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
         <oj-common-security.version>1.0-SNAPSHOT</oj-common-security.version>
         <oj-common-mybatis.version>1.0-SNAPSHOT</oj-common-mybatis.version>
         <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
+        <pagehelper.boot.version>2.0.0</pagehelper.boot.version>
     </properties>
     <dependencies>
         <!-- bootstrap 启动器 -->
