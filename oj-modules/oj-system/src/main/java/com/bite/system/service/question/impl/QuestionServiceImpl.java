@@ -7,7 +7,9 @@ import com.bite.common.core.enums.ResultCode;
 import com.bite.common.security.exception.ServiceException;
 import com.bite.system.domain.question.Question;
 import com.bite.system.domain.question.dto.QuestionAddDTO;
+import com.bite.system.domain.question.dto.QuestionEditDTO;
 import com.bite.system.domain.question.dto.QuestionQueryDTO;
+import com.bite.system.domain.question.vo.QuestionDetailVO;
 import com.bite.system.domain.question.vo.QuestionVO;
 import com.bite.system.mapper.question.QuestionMapper;
 import com.bite.system.service.question.IQuestionService;
@@ -49,5 +51,46 @@ public class QuestionServiceImpl implements IQuestionService {
         Question question = new Question();
         BeanUtils.copyProperties(questionAddDTO, question);
         return questionMapper.insert(question);
+    }
+
+    @Override
+    public QuestionDetailVO detail(Long questionId) {
+        Question question = questionMapper.selectById(questionId);
+        if(question == null){
+            throw new ServiceException(ResultCode.FAILED_NOT_EXISTS);
+        }
+        QuestionDetailVO questionDetailVO = new QuestionDetailVO();
+        BeanUtils.copyProperties(question, questionDetailVO);
+        return questionDetailVO;
+    }
+
+    @Override
+    public int edit(QuestionEditDTO questionEditDTO) {
+        Question oldQuestion = questionMapper.selectById(questionEditDTO.getQuestionId());
+        if(oldQuestion == null){
+            throw new ServiceException(ResultCode.FAILED_NOT_EXISTS);
+        }
+        oldQuestion.setTitle(questionEditDTO.getTitle());
+        oldQuestion.setDifficulty(questionEditDTO.getDifficulty());
+        oldQuestion.setTimeLimit(questionEditDTO.getTimeLimit());
+        oldQuestion.setSpaceLimit(questionEditDTO.getSpaceLimit());
+        oldQuestion.setContent(questionEditDTO.getContent());
+        oldQuestion.setQuestionCase(questionEditDTO.getQuestionCase());
+        oldQuestion.setDefaultCode(questionEditDTO.getDefaultCode());
+        oldQuestion.setMainFuc(questionEditDTO.getMainFuc());
+        return questionMapper.updateById(oldQuestion);
+    }
+
+    @Override
+    public int delete(Long questionId) {
+        isExit(questionId);
+        return questionMapper.deleteById(questionId);
+    }
+
+    private void isExit(Long questionId) {
+        Question question = questionMapper.selectById(questionId);
+        if (question == null) {
+            throw new ServiceException(ResultCode.FAILED_NOT_EXISTS);
+        }
     }
 }
