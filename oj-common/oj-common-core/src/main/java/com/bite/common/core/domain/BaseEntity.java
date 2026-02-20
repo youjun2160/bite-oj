@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 public class BaseEntity {
 
     @TableField(fill = FieldFill.INSERT)
-    private long createBy;
+    private Long createBy;
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     @TableField(fill = FieldFill.INSERT)
-    private long updateBy;
+    private Long updateBy;
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime updateTime;

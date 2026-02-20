@@ -1,0 +1,24 @@
+package com.bite.system.service.exam.impl;
+
+import com.bite.system.domain.exam.dto.ExamQueryDTO;
+import com.bite.system.domain.exam.vo.ExamVO;
+import com.bite.system.mapper.exam.ExamMapper;
+import com.bite.system.service.exam.IExamService;
+import com.github.pagehelper.PageHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ExamServiceImpl implements IExamService {
+
+    @Autowired
+    private ExamMapper examMapper;
+
+    @Override
+    public List<ExamVO> list(ExamQueryDTO examQueryDTO) {
+        PageHelper.startPage(examQueryDTO.getPageNum(), examQueryDTO.getPageSize());
+        return examMapper.selectExamList(examQueryDTO);
+    }
+}

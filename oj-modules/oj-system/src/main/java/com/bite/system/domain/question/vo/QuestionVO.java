@@ -1,5 +1,9 @@
 package com.bite.system.domain.question.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 public class QuestionVO {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long questionId;
 
     private String title;
@@ -17,5 +22,6 @@ public class QuestionVO {
 
     private String createName;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 }
